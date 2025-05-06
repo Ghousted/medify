@@ -13,13 +13,13 @@ import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCQY4O640vc46Gw5l2kLLyogyDsq9p5h60",
-  authDomain: "medify-ed822.firebaseapp.com",
-  projectId: "medify-ed822",
-  storageBucket: "medify-ed822.firebasestorage.app",
-  messagingSenderId: "881406921621",
-  appId: "1:881406921621:web:9a7d400d42ffa38e8b849c",
-  measurementId: "G-6QTFESZ88V"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID // Optional for Analytics
 };
 
 // Initialize Firebase

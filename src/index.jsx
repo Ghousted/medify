@@ -9,6 +9,7 @@ import {
 } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import Modal from './utils/modalLogin'; // Import the Modal component
+import Loading from './Loading'; // Import the Loading component
 
 const Index = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -16,7 +17,7 @@ const Index = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState({ title: '', message: '' });
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -38,6 +39,7 @@ const Index = () => {
 
   const handleSignUp = async (event) => {
     event.preventDefault();
+    setLoading(true);
     const firstName = event.target.firstName.value;
     const lastName = event.target.lastName.value;
     const email = event.target.email.value;
@@ -45,7 +47,8 @@ const Index = () => {
     const confirmPassword = event.target.confirmPassword.value;
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      openModal("Error", "Passwords do not match.");
+      setLoading(false);
       return;
     }
 
@@ -57,12 +60,15 @@ const Index = () => {
       openModal("Email Sent", "Verification email sent. Please verify your email before signing in.");
       setIsSignUp(false);
     } catch (error) {
-      setError(error.message);
+      openModal("Error", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSignIn = async (event) => {
     event.preventDefault();
+    setLoading(true);
     const email = event.target.email.value;
     const password = event.target.password.value;
 
@@ -74,7 +80,9 @@ const Index = () => {
         openModal("Verification Required", "Please verify your email before signing in.");
       }
     } catch (error) {
-      setError(error.message);
+      openModal("Error", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,11 +92,14 @@ const Index = () => {
     try {
       await doPasswordReset(email);
       openModal("Password Reset", "Password reset email sent.");
-      closeModal();
     } catch (error) {
-      setError(error.message);
+      openModal("Error", error.message);
     }
   };
+
+  if (loading) {
+    return <Loading />; // Use the Loading component
+  }
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
@@ -148,7 +159,6 @@ const Index = () => {
                   </button>
                 </div>
               </form>
-              {error && <p className="text-red-500 mt-4">{error}</p>}
             </>
           )}
         </div>
@@ -214,7 +224,6 @@ const Index = () => {
                   Sign Up
                 </button>
               </form>
-              {error && <p className="text-red-500 mt-4">{error}</p>}
             </>
           ) : (
             <>
@@ -242,14 +251,6 @@ const Index = () => {
           message={modalMessage.message}
         />
       )}
-
-      {/* Custom Modal for Messages */}
-      <Modal
-        isOpen={showModal}
-        onClose={closeModal}
-        title={modalMessage.title}
-        message={modalMessage.message}
-      />
     </div>
   );
 };
